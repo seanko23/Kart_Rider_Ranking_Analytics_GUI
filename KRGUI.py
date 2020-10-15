@@ -16,11 +16,24 @@ import os
 
 
 
-df = pd.read_csv("kriderrushpractice.csv",sep=",")
+df = pd.read_csv("kartriderdataset.csv",sep=",")
 
-sorter = len(df.iloc[:,2:].columns)+2
+sorter = len(df.iloc[:,1:].columns)+2
 
-for i in df.iloc[:,2:]:
+#Below lines convert m:s:ms format to float
+
+column_names = list(df.columns)[1:]
+
+for i in column_names:
+    measured_times = []
+    for j in df[i]:     
+        j = [int(z) for z in j.split(":")]
+        updated_time = float(str(j[0]*60+j[1])+"."+str(j[2]))
+        measured_times.append(updated_time)
+    df[i] = measured_times
+
+
+for i in df.iloc[:,1:]:
     scaled_values = ((df[i] - df[i].min())/(df[i].max() - df[i].min()))
     new_column_name = 'scaled_' + i
     df[new_column_name] = scaled_values
@@ -29,7 +42,7 @@ for i in df.iloc[:,2:]:
 sum_of_records_list = []
 for i in df.iterrows():
     sum_of_records = 0
-    for j in i[1][2:sorter]:
+    for j in i[1][1:sorter]:
         sum_of_records+=j
     sum_of_records_list.append(sum_of_records)
     
@@ -177,7 +190,15 @@ class ChartPage(tk.Frame):
 class AdvicePage(tk.Frame):
     def __init__(self,master):
         tk.Frame.__init__(self,master)
-        tk.Label(self, text=self.get_advice()).pack(fill="x", pady=10)
+        frame = tk.Frame(self)
+        frame.pack()
+        #tk.Label(frame, text=self.get_advice()).pack(fill="x", pady=10)
+        advice = tk.Text(frame, height = 25)
+        advice.insert(tk.END, self.get_advice())
+        advice.tag_configure("center", justify='center')
+        advice.tag_add("center", "1.0", "end")
+        advice.pack(fill="both",expand=True)
+
         tk.Button(self,text="Go back to the previous page", command=lambda: master.switch_frame(EloPage)).pack(expand=True)
 
 # Returns the string of maps the user is underperforming compared to the personal records of other maps
@@ -186,7 +207,7 @@ class AdvicePage(tk.Frame):
         average_list = []
 
         for i in df.iterrows():
-            average_list.append(i[1][sorter:sorter*2-2].mean()) # The numbers 8:14 represents scaled_something columns
+            average_list.append(i[1][sorter:sorter*2-1].mean()) # The numbers 8:14 represents scaled_something columns
 
         df['scaled_average'] = average_list
 
@@ -229,7 +250,7 @@ class AdvicePage(tk.Frame):
             if i != final_maps_to_improve[-1]:
                 final_string = final_string + i + ', '
             else:
-                final_string = final_string[:-2] + ' and ' + i + '\n\n(Maps are listed from comparatively worst performing to decent performing tracks)'
+                final_string = final_string[:-2] + ' and ' + i + '\n\n\n\nNote:\nMaps are listed from comparatively worst performing to decent performing tracks'
 
         return final_string
     
