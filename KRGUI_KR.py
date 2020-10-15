@@ -174,18 +174,23 @@ class ChartPage(tk.Frame):
         rank_chart.pack(fill="both",expand=True)
 
         scrollbar.config(command=rank_chart.yview)
+        tk.Button(self, text="Download the chart as Excel file", command = lambda: self.download_chart()).pack(expand=True)
 
 
 
 
     def show_chart(self):
+        global final_ranking_df
         ranking_df['ELO'] = round(ranking_df['ELO'],0).astype(int)
         self.ranking_list = [i+1 for i in range(len(ranking_df))]
         ranking_df['Rank'] = self.ranking_list
         self.cols = ranking_df.columns.tolist()
         self.cols = self.cols[-1:] + self.cols[:-1]
-        self.final_ranking_df=ranking_df[self.cols]
-        return self.final_ranking_df.to_string(index=False)
+        final_ranking_df=ranking_df[self.cols]
+        return final_ranking_df.to_string(index=False)
+
+    def download_chart(self):
+        return final_ranking_df.to_excel('ranking_chart.xlsx', index=False)
         
 
 
