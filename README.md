@@ -5,5 +5,4 @@ Kart Rider Rush Plus is a mobile game that is available on both ios and android 
 
 KRGUI.py is English based python file and KRGUI-KR.py is Korean based python file.
 
-Both python files will require the user to download kartriderdataset.csv file.
-Korean based file will require NotoSansKR-Medium.otf file.
+Both python files will require the user to download kartriderdataset.csv file.\nKorean based file will require NotoSansKR-Medium.otf file.
