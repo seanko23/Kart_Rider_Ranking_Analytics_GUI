@@ -34,7 +34,7 @@ for i in column_names:
 
 
 for i in df.iloc[:,1:]:
-    scaled_values = ((df[i] - df[i].min())/(df[i].max() - df[i].min()))
+    scaled_values = (-(df[i] - df[i].max())/(df[i].max() - df[i].min()))
     new_column_name = 'scaled_' + i
     df[new_column_name] = scaled_values
 
@@ -45,6 +45,11 @@ for i in df.iterrows():
     for j in i[1][1:sorter]:
         sum_of_records+=j
     sum_of_records_list.append(sum_of_records)
+
+mean_value = np.mean(sum_of_records_list)
+
+for i in range(len(sum_of_records_list)):
+    sum_of_records_list[i] = mean_value - sum_of_records_list[i]
     
 df['Record_Sum'] = sum_of_records_list
 
@@ -213,7 +218,7 @@ class AdvicePage(tk.Frame):
         average_list = []
 
         for i in df.iterrows():
-            average_list.append(i[1][sorter:sorter*2-1].mean()) # The numbers 8:14 represents scaled_something columns
+            average_list.append(i[1][sorter-1:sorter*2-3].mean()) # The numbers 8:14 represents scaled_something columns
 
         df['scaled_average'] = average_list
 
@@ -263,9 +268,9 @@ class AdvicePage(tk.Frame):
     
         
         
-if __name__ == "__main__":
+#if __name__ == "__main__":
 
-    app = KrEloApp()
-    app.mainloop()
-        
-        
+app = KrEloApp()
+app.mainloop()
+    
+    
